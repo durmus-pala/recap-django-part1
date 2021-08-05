@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from .forms import ContactForm
-
+from .models import Teacher
 # Create your views here.
 
 
 def home(request):
+    teacher = Teacher.objects.order_by('speciality').distinct()
 
     if request.method == "POST":
-        form = ContactForm(request.POST)
+        form = ContactForm(request.POST or None)
 
         if form.is_valid():
             form.save()
@@ -16,9 +17,9 @@ def home(request):
         form = ContactForm()
 
     context = {
-        'form': form
+        'form': form,
+        'teachers': teacher
     }
-
     return render(request, 'index.html', context)
 
 
@@ -27,4 +28,10 @@ def about(request):
 
 
 def teacher(request):
-    return render(request, 'teacher.html')
+    teacher = Teacher.objects.all()
+    context = {
+
+        'teachers': teacher
+
+    }
+    return render(request, 'teacher.html', context)
